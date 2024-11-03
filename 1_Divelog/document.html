@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scuba Diving Log Web App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            .no-print { display: none; }
+            body { color: black; background-color: white; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans p-8">
+    <!-- Title Section -->
+    <header class="text-center mb-10">
+        <h1 class="text-4xl font-bold text-blue-600 mb-4">Scuba Diving Log Web App</h1>
+        <p class="text-gray-600 text-lg">A client-side web application for scuba divers to log, edit, and review their dive experiences.</p>
+    </header>
+
+    <!-- Features Section -->
+    <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-700">Introduction</h2>
+        <ul class="list-disc list-inside space-y-2">
+            <li><span class="font-medium">Create, Edit, and Delete Diving Logs:</span> Manage each dive experience with detailed information.</li>
+            <li><span class="font-medium">Dark/Light Mode Toggle:</span> Toggle between light and dark modes for comfortable viewing.</li>
+            <li><span class="font-medium">Persistent Data Storage:</span> Dive logs are stored locally on the browser using LocalStorage.</li>
+            <li><span class="font-medium">Responsive UI:</span> An adaptive design using Tailwind CSS that looks great on both mobile and desktop.</li>
+        </ul>
+        <div class="bg-gray-100 p-4 rounded-lg mb-4">
+            <p class="text-center text-gray-600 mb-4">Below is a screenshot of the main interface, showcasing the dive log list and theme switcher.</p>
+            <div class="border rounded overflow-hidden">
+                <img src="screenshot.jpg" alt="Screenshot of the Scuba Diving Log application" class="w-full h-auto">
+            </div>
+        </div>
+    </section>
+    
+        <!-- How to Use Section -->
+    <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-700">How to Use</h2>
+        <p class="text-gray-600 mb-4">
+            To get started, open the application in a web browser and follow these steps:
+        </p>
+        <ol class="list-decimal list-inside space-y-2">
+            <li>Click on <span class="font-medium">"Add New Log"</span> to create a new dive log entry.</li>
+            <li>Fill out the details for each field, including dive location, date, depth, and other relevant information.</li>
+            <li>To edit or delete a log, use the respective icons on each entry.</li>
+            <li>All data is stored locally in your browser, so you can return to your logs any time from the same device.</li>
+        </ol>
+    </section>
+
+    <!-- Development Process Section -->
+    <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-700">Development Process</h2>
+        <p class="text-gray-600 mb-4">
+            This application was built to provide scuba divers a convenient way to record and review their dive experiences. The following steps outline the development process:
+        </p>
+        <ol class="list-decimal list-inside space-y-2">
+            <li><span class="font-medium">Planning:</span> We identified essential features for a scuba diving log, such as dive location, date, depth, and additional details about the dive experience.</li>
+            <li><span class="font-medium">Design:</span> Using Tailwind CSS, we created a clean, minimalistic design to enhance readability and ease of use.</li>
+            <li><span class="font-medium">Development:</span> The application was developed as a client-side app using HTML, CSS, and JavaScript, with data stored in LocalStorage for persistent logging.</li>
+            <li><span class="font-medium">UI Enhancements:</span> We added a theme switcher for light and dark mode, improved the layout, and ensured responsive design for various screen sizes.</li>
+            <li><span class="font-medium">Testing and Refinement:</span> The application was tested for usability, performance, and accessibility, with adjustments made for a smooth user experience.</li>
+        </ol>
+    </section>
+    
+    <!-- Development Process Section -->
+    <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-700">Challenges and learnings</h2>
+        <p class="text-gray-600 mb-4">
+            This application was built to provide scuba divers a convenient way to record and review their dive experiences. The following steps outline the development process:
+        </p>
+        <ol class="list-decimal list-inside space-y-2">
+            <li><span class="font-medium">Planning:</span> We identified essential features for a scuba diving log, such as dive location, date, depth, and additional details about the dive experience.</li>
+            <li><span class="font-medium">Design:</span> Using Tailwind CSS, we created a clean, minimalistic design to enhance readability and ease of use.</li>
+        </ol>
+    </section>
+
+    <!-- Conclusion Section -->
+    <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-700">Future work</h2>
+        <p class="text-gray-600">
+            The Scuba Diving Log application is a simple, client-side solution for divers to record their underwater experiences efficiently. Designed with ease of use and flexibility in mind, it can be used both online and offline, offering essential features with a clean and responsive interface.
+        </p>
+    </section>
+</body>
+</html>
+
