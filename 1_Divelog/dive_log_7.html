@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Scuba Diving Log</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .icon-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.375rem;
+            padding: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-6 font-sans text-gray-800">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl font-bold text-center mb-8">Scuba Diving Log</h1>
+        
+        <div class="flex justify-end mb-4 space-x-2">
+            <button onclick="exportLogs()" class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 transition duration-200">Export Logs</button>
+            <input type="file" id="importFileInput" class="hidden" onchange="importLogs(event)">
+            <button onclick="document.getElementById('importFileInput').click()" class="px-4 py-2 bg-green-500 text-white rounded shadow hover:bg-green-600 transition duration-200">Import Logs</button>
+        </div>
+
+        <div class="bg-white p-4 rounded shadow-md mb-4">
+            <h2 class="text-2xl font-semibold mb-2">Dive Statistics</h2>
+            <p id="totalDives" class="text-gray-700">Total Dives: 0</p>
+            <p id="totalDiveTime" class="text-gray-700">Total Dive Time: 0 minutes</p>
+            <p id="maxDepth" class="text-gray-700">Max Depth: 0 m/ft</p>
+            <p id="averageMaxDepth" class="text-gray-700">Average Max Depth: 0 m/ft</p>
+        </div>
+
+        <div id="placeholder" class="text-center text-gray-500 py-10 hidden">
+            <p>No diving logs yet. Time to make some underwater memories!</p>
+            <button onclick="openLogModal()" class="mt-4 px-6 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 transition duration-200">
+                Add Your First Log
+            </button>
+        </div>
+        <button id="addLogButton" onclick="openLogModal()" class="mb-6 px-6 py-2 bg-green-500 text-white rounded shadow hover:bg-green-600 transition duration-200 hidden">
+            + Add New Log
+        </button>
+        <div id="logList" class="space-y-4 grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </div>
+
+    <!-- Log Modal -->
+    <div id="logModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-xl overflow-y-auto max-h-[90vh]">
+            <h2 id="modalTitle" class="text-2xl font-semibold mb-4">New Dive Log</h2>
+            <form id="logForm">
+                <input type="hidden" id="logId" />
+                <div class="mb-4">
+                    <label for="diveNumber" class="block text-gray-700 font-medium">Dive Number</label>
+                    <input type="number" id="diveNumber" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300" required />
+                </div>
+                <div class="mb-4">
+                    <label for="diveLocation" class="block text-gray-700 font-medium">Location</label>
+                    <input type="text" id="diveLocation" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300" required />
+                </div>
+                <div class="mb-4">
+                    <label for="diveDate" class="block text-gray-700 font-medium">Date</label>
+                    <input type="date" id="diveDate" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300" required />
+                </div>
+                <div class="mb-4">
+                    <label for="diveTime" class="block text-gray-700 font-medium">Time</label>
+                    <input type="time" id="diveTime" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300" required />
+                </div>
+                <div class="mb-4">
+                    <label for="duration" class="block text-gray-700 font-medium">Duration (minutes)</label>
+                    <input type="number" id="duration" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300" required />
+                </div>
+                <div class="mb-4">
+                    <label for="maxDepth" class="block text-gray-700 font-medium">Max Depth (meters/feet)</label>
+                    <input type="number" id="maxDepth" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300" required />
+                </div>
+                <div class="flex justify-end space-x-2 mt-6">
+                    <button type="button" onclick="closeLogModal()" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 transition duration-200">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLogs();
+            updateStatistics();
+        });
+
+        function loadLogs() {
+            const logs = JSON.parse(localStorage.getItem('divingLogs')) || [];
+            const logList = document.getElementById('logList');
+            const addLogButton = document.getElementById('addLogButton');
+            logList.innerHTML = '';
+
+            if (logs.length === 0) {
+                document.getElementById('placeholder').classList.remove('hidden');
+                addLogButton.classList.add('hidden');
+            } else {
+                document.getElementById('placeholder').classList.add('hidden');
+                addLogButton.classList.remove('hidden');
+                logs.forEach((log, index) => {
+                    const logItem = document.createElement('div');
+                    logItem.className = 'bg-white p-4 rounded-lg shadow-md border hover:shadow-lg transition duration-200';
+                    logItem.innerHTML = `
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="text-lg font-semibold text-blue-600">${log.location}</h3>
+                                <p class="text-sm text-gray-600">Date: ${log.date}</p>
+                                <p class="text-gray-700 mt-2">Max Depth: ${log.maxDepth} m/ft</p>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="editLog(${index})" class="icon-button text-blue-500 hover:bg-blue-100">
+                                    ✏️
+                                </button>
+                                <button onclick="deleteLog(${index})" class="icon-button text-red-500 hover:bg-red-100">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    logList.appendChild(logItem);
+                });
+            }
+            updateStatistics();
+        }
+
+        function updateStatistics() {
+            const logs = JSON.parse(localStorage.getItem('divingLogs')) || [];
+            const totalDives = logs.length;
+            const totalDiveTime = logs.reduce((sum, log) => sum + parseInt(log.duration), 0);
+            const maxDepth = Math.max(0, ...logs.map(log => parseInt(log.maxDepth)));
+            const averageMaxDepth = totalDives > 0 ? (logs.reduce((sum, log) => sum + parseInt(log.maxDepth), 0) / totalDives).toFixed(2) : 0;
+
+            document.getElementById('totalDives').textContent = `Total Dives: ${totalDives}`;
+            document.getElementById('totalDiveTime').textContent = `Total Dive Time: ${totalDiveTime} minutes`;
+            document.getElementById('maxDepth').textContent = `Max Depth: ${maxDepth} m/ft`;
+            document.getElementById('averageMaxDepth').textContent = `Average Max Depth: ${averageMaxDepth} m/ft`;
+        }
+
+        function exportLogs() {
+            const logs = JSON.parse(localStorage.getItem('divingLogs')) || [];
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(logs));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "dive_logs.json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        function importLogs(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const importedLogs = JSON.parse(e.target.result);
+                    if (Array.isArray(importedLogs)) {
+                        localStorage.setItem('divingLogs', JSON.stringify(importedLogs));
+                        loadLogs();
+                    } else {
+                        alert('Invalid file format');
+                    }
+                } catch (err) {
+                    alert('Error reading file');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function openLogModal(log = null, index = null) {
+            document.getElementById('logModal').classList.remove('hidden');
+            if (log) {
+                document.getElementById('modalTitle').textContent = 'Edit Dive Log';
+                document.getElementById('logId').value = index;
+                document.getElementById('diveNumber').value = log.diveNumber;
+                document.getElementById('diveLocation').value = log.location;
+                document.getElementById('diveDate').value = log.date;
+                document.getElementById('diveTime').value = log.time;
+                document.getElementById('duration').value = log.duration;
+                document.getElementById('maxDepth').value = log.maxDepth;
+            } else {
+                document.getElementById('modalTitle').textContent = 'New Dive Log';
+                document.getElementById('logForm').reset();
+                document.getElementById('logId').value = '';
+            }
+        }
+
+        function closeLogModal() {
+            document.getElementById('logModal').classList.add('hidden');
+        }
+
+        document.getElementById('logForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const logId = document.getElementById('logId').value;
+            const newLog = {
+                diveNumber: document.getElementById('diveNumber').value,
+                location: document.getElementById('diveLocation').value,
+                date: document.getElementById('diveDate').value,
+                time: document.getElementById('diveTime').value,
+                duration: document.getElementById('duration').value,
+                maxDepth: document.getElementById('maxDepth').value,
+            };
+
+            let logs = JSON.parse(localStorage.getItem('divingLogs')) || [];
+
+            if (logId) {
+                logs[logId] = newLog;
+            } else {
+                logs.push(newLog);
+            }
+
+            localStorage.setItem('divingLogs', JSON.stringify(logs));
+            closeLogModal();
+            loadLogs();
+        });
+
+        function editLog(index) {
+            const logs = JSON.parse(localStorage.getItem('divingLogs'));
+            openLogModal(logs[index], index);
+        }
+
+        function deleteLog(index) {
+            if (confirm('Are you sure you want to delete this log?')) {
+                let logs = JSON.parse(localStorage.getItem('divingLogs'));
+                logs.splice(index, 1);
+                localStorage.setItem('divingLogs', JSON.stringify(logs));
+                loadLogs();
+            }
+        }
+    </script>
+</body>
+</html>
+

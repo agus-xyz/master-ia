@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scuba Diving Log</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4">
+    <div class="container mx-auto">
+        <h1 class="text-3xl font-bold text-center mb-4">Scuba Diving Log</h1>
+
+        <div id="app">
+            <!-- Placeholder -->
+            <div id="placeholder" class="placeholder">
+                <p class="text-lg italic">No logs yet. Start your diving journey by adding your first dive!</p>
+            </div>
+
+            <!-- Log Form -->
+            <form id="logForm" class="mb-4 hidden">
+                <div class="grid gap-4 grid-cols-1">
+                    <input type="text" id="diveLocation" placeholder="Dive Location" required class="p-2 border rounded">
+                    <input type="number" id="diveDepth" placeholder="Depth (meters)" required class="p-2 border rounded">
+                    <input type="time" id="diveDuration" placeholder="Duration (HH:MM)" required class="p-2 border rounded">
+                    <textarea id="diveNotes" placeholder="Notes" class="p-2 border rounded"></textarea>
+                </div>
+                <button type="submit" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Add Dive Log</button>
+            </form>
+
+            <!-- Log List -->
+            <div id="logList" class="space-y-4 hidden">
+                <h2 class="text-2xl font-bold mb-2">Your Diving Logs</h2>
+                <div id="logsContainer" class="space-y-2"></div>
+            </div>
+            
+            <!-- Global Stats -->
+            <div id="stats" class="hidden mt-4">
+                <h2 class="text-2xl font-bold mb-2">Global Stats</h2>
+                <p id="totalDives" class="text-lg"></p>
+                <p id="totalTime" class="text-lg"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Helper functions
+        function loadLogs() {
+            return JSON.parse(localStorage.getItem('diveLogs')) || [];
+        }
+
+        function saveLogs(logs) {
+            localStorage.setItem('diveLogs', JSON.stringify(logs));
+        }
+
+        function renderLogs() {
+            const logs = loadLogs();
+            const logsContainer = document.getElementById('logsContainer');
+            logsContainer.innerHTML = '';
+
+            if (logs.length === 0) {
+                document.getElementById('placeholder').classList.remove('hidden');
+                document.getElementById('logList').classList.add('hidden');
+                document.getElementById('stats').classList.add('hidden');
+            } else {
+                document.getElementById('placeholder').classList.add('hidden');
+                document.getElementById('logList').classList.remove('hidden');
+                document.getElementById('stats').classList.remove('hidden');
+
+                logs.forEach((log, index) => {
+                    const logElement = document.createElement('div');
+                    logElement.className = 'p-4 border rounded bg-white shadow';
+                    logElement.innerHTML = `
+                        <p><strong>Location:</strong> ${log.location}</p>
+                        <p><strong>Depth:</strong> ${log.depth} meters</p>
+                        <p><strong>Duration:</strong> ${log.duration} minutes</p>
+                        <p><strong>Notes:</strong> ${log.notes}</p>
+                        <div class="mt-2 flex space-x-2">
+                            <button onclick="editLog(${index})" class="bg-yellow-500 text-white px-2 py-1 rounded">Edit</button>
+                            <button onclick="deleteLog(${index})" class="bg-red-500 text-white px-2 py-1 rounded">Delete</button>
+                        </div>
+                    `;
+                    logsContainer.appendChild(logElement);
+                });
+
+                updateStats();
+            }
+        }
+
+        function updateStats() {
+            const logs = loadLogs();
+            document.getElementById('totalDives').textContent = `Total Number of Dives: ${logs.length}`;
+
+            const totalMinutes = logs.reduce((sum, log) => sum + parseInt(log.duration, 10), 0);
+            const totalHours = Math.floor(totalMinutes / 60);
+            const remainderMinutes = totalMinutes % 60;
+
+            document.getElementById('totalTime').textContent = `Total Underwater Time: ${totalHours}h ${remainderMinutes}m`;
+        }
+
+        function addLog(event) {
+            event.preventDefault();
+            const location = document.getElementById('diveLocation').value;
+            const depth = document.getElementById('diveDepth').value;
+            const duration = document.getElementById('diveDuration').value.split(':');
+            const minutes = parseInt(duration[0]) * 60 + parseInt(duration[1]);
+            const notes = document.getElementById('diveNotes').value;
+
+            const newLog = {
+                location,
+                depth,
+                duration: minutes,
+                notes
+            };
+
+            const logs = loadLogs();
+            logs.push(newLog);
+            saveLogs(logs);
+
+            document.getElementById('logForm').reset();
+            renderLogs();
+        }
+
+        function editLog(index) {
+            const logs = loadLogs();
+            const log = logs[index];
+
+            document.getElementById('diveLocation').value = log.location;
+            document.getElementById('diveDepth').value = log.depth;
+            document.getElementById('diveDuration').value = `${Math.floor(log.duration / 60).toString().padStart(2, '0')}:${(log.duration % 60).toString().padStart(2, '0')}`;
+            document.getElementById('diveNotes').value = log.notes;
+
+            logs.splice(index, 1);
+            saveLogs(logs);
+            renderLogs();
+        }
+
+        function deleteLog(index) {
+            const logs = loadLogs();
+            logs.splice(index, 1);
+            saveLogs(logs);
+            renderLogs();
+        }
+
+        document.getElementById('logForm').addEventListener('submit', addLog);
+
+        // Initial render
+        renderLogs();
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scuba Diving Log</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6 font-sans">
+    <div class="max-w-3xl mx-auto">
+        <h1 class="text-3xl font-bold text-center mb-4">Scuba Diving Log</h1>
+        <div id="placeholder" class="text-center text-gray-500 py-10 hidden">
+            <p>No diving logs yet. Time to make some underwater memories!</p>
+            <button onclick="openLogModal()" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                Add Your First Log
+            </button>
+        </div>
+        <button id="addLogButton" onclick="openLogModal()" class="mt-4 mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 hidden">
+            Add New Log
+        </button>
+        <div id="logList" class="space-y-4"></div>
+    </div>
+
+    <!-- Log Modal -->
+    <div id="logModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg overflow-y-auto max-h-[80vh]">
+            <h2 id="modalTitle" class="text-2xl mb-4">New Dive Log</h2>
+            <form id="logForm">
+                <input type="hidden" id="logId" />
+                <div class="mb-4">
+                    <label for="diveNumber" class="block text-gray-700">Dive Number</label>
+                    <input type="number" id="diveNumber" class="w-full px-3 py-2 border rounded" required />
+                </div>
+                <div class="mb-4">
+                    <label for="diveLocation" class="block text-gray-700">Location</label>
+                    <input type="text" id="diveLocation" class="w-full px-3 py-2 border rounded" required />
+                </div>
+                <div class="mb-4">
+                    <label for="diveDate" class="block text-gray-700">Date</label>
+                    <input type="date" id="diveDate" class="w-full px-3 py-2 border rounded" required />
+                </div>
+                <div class="mb-4">
+                    <label for="diveTime" class="block text-gray-700">Time</label>
+                    <input type="time" id="diveTime" class="w-full px-3 py-2 border rounded" required />
+                </div>
+                <div class="mb-4">
+                    <label for="duration" class="block text-gray-700">Duration (minutes)</label>
+                    <input type="number" id="duration" class="w-full px-3 py-2 border rounded" required />
+                </div>
+                <div class="mb-4">
+                    <label for="maxDepth" class="block text-gray-700">Max Depth (meters/feet)</label>
+                    <input type="number" id="maxDepth" class="w-full px-3 py-2 border rounded" required />
+                </div>
+                <div class="mb-4">
+                    <label for="avgDepth" class="block text-gray-700">Average Depth (meters/feet)</label>
+                    <input type="number" id="avgDepth" class="w-full px-3 py-2 border rounded" />
+                </div>
+                <div class="mb-4">
+                    <label for="waterTemp" class="block text-gray-700">Water Temperature (°C/°F)</label>
+                    <input type="number" id="waterTemp" class="w-full px-3 py-2 border rounded" />
+                </div>
+                <div class="mb-4">
+                    <label for="diveType" class="block text-gray-700">Dive Type</label>
+                    <input type="text" id="diveType" class="w-full px-3 py-2 border rounded" placeholder="e.g., shore, boat, night" />
+                </div>
+                <div class="mb-4">
+                    <label for="equipmentUsed" class="block text-gray-700">Equipment Used</label>
+                    <input type="text" id="equipmentUsed" class="w-full px-3 py-2 border rounded" placeholder="e.g., wetsuit, BCD, fins" />
+                </div>
+                <div class="mb-4">
+                    <label for="airMix" class="block text-gray-700">Air Mix (O2 %)</label>
+                    <input type="text" id="airMix" class="w-full px-3 py-2 border rounded" placeholder="e.g., Air, Nitrox (32%)" />
+                </div>
+                <div class="mb-4">
+                    <label for="startPressure" class="block text-gray-700">Starting Pressure (bar/psi)</label>
+                    <input type="number" id="startPressure" class="w-full px-3 py-2 border rounded" />
+                </div>
+                <div class="mb-4">
+                    <label for="endPressure" class="block text-gray-700">Ending Pressure (bar/psi)</label>
+                    <input type="number" id="endPressure" class="w-full px-3 py-2 border rounded" />
+                </div>
+                <div class="mb-4">
+                    <label for="buddy" class="block text-gray-700">Buddy/Guide</label>
+                    <input type="text" id="buddy" class="w-full px-3 py-2 border rounded" />
+                </div>
+                <div class="mb-4">
+                    <label for="certificationLevel" class="block text-gray-700">Certification Level</label>
+                    <input type="text" id="certificationLevel" class="w-full px-3 py-2 border rounded" placeholder="e.g., Open Water, Advanced" />
+                </div>
+                <div class="mb-4">
+                    <label for="safetyStop" class="block text-gray-700">Safety Stop (minutes)</label>
+                    <input type="number" id="safetyStop" class="w-full px-3 py-2 border rounded" />
+                </div>
+                <div class="mb-4">
+                    <label for="visibility" class="block text-gray-700">Visibility (meters/feet)</label>
+                    <input type="text" id="visibility" class="w-full px-3 py-2 border rounded" />
+                </div>
+                <div class="mb-4">
+                    <label for="current" class="block text-gray-700">Current</label>
+                    <input type="text" id="current" class="w-full px-3 py-2 border rounded" placeholder="e.g., mild, strong" />
+                </div>
+                <div class="mb-4">
+                    <label for="weatherConditions" class="block text-gray-700">Weather Conditions</label>
+                    <input type="text" id="weatherConditions" class="w-full px-3 py-2 border rounded" />
+                </div>
+                <div class="mb-4">
+                    <label for="marineLife" class="block text-gray-700">Marine Life Observed</label>
+                    <textarea id="marineLife" class="w-full px-3 py-2 border rounded"></textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="bottomType" class="block text-gray-700">Bottom Type</label>
+                    <input type="text" id="bottomType" class="w-full px-3 py-2 border rounded" placeholder="e.g., sandy, rocky" />
+                </div>
+                <div class="mb-4">
+                    <label for="notes" class="block text-gray-700">Notes/Comments</label>
+                    <textarea id="notes" class="w-full px-3 py-2 border rounded"></textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="diveRating" class="block text-gray-700">Dive Rating (1-5)</label>
+                    <input type="number" id="diveRating" min="1" max="5" class="w-full px-3 py-2 border rounded" />
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" onclick="closeLogModal()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLogs();
+        });
+
+        function loadLogs() {
+            const logs = JSON.parse(localStorage.getItem('divingLogs')) || [];
+            const logList = document.getElementById('logList');
+            const addLogButton = document.getElementById('addLogButton');
+            logList.innerHTML = '';
+
+            if (logs.length === 0) {
+                document.getElementById('placeholder').classList.remove('hidden');
+                addLogButton.classList.add('hidden');
+            } else {
+                document.getElementById('placeholder').classList.add('hidden');
+                addLogButton.classList.remove('hidden');
+                logs.forEach((log, index) => {
+                    const logItem = document.createElement('div');
+                    logItem.className = 'bg-white p-4 rounded shadow';
+                    logItem.innerHTML = `
+                        <h3 class="text-lg font-semibold">${log.location}</h3>
+                        <p class="text-sm text-gray-600">Date: ${log.date}</p>
+                        <p class="text-gray-700 mt-2">Max Depth: ${log.maxDepth} m/ft</p>
+                        <div class="flex justify-end space-x-2 mt-2">
+                            <button onclick="editLog(${index})" class="text-blue-500 hover:underline">Edit</button>
+                            <button onclick="deleteLog(${index})" class="text-red-500 hover:underline">Delete</button>
+                        </div>
+                    `;
+                    logList.appendChild(logItem);
+                });
+            }
+        }
+
+        function openLogModal(log = null, index = null) {
+            document.getElementById('logModal').classList.remove('hidden');
+            if (log) {
+                document.getElementById('modalTitle').textContent = 'Edit Dive Log';
+                document.getElementById('logId').value = index;
+                document.getElementById('diveNumber').value = log.diveNumber;
+                document.getElementById('diveLocation').value = log.location;
+                document.getElementById('diveDate').value = log.date;
+                document.getElementById('diveTime').value = log.time;
+                document.getElementById('duration').value = log.duration;
+                document.getElementById('maxDepth').value = log.maxDepth;
+                document.getElementById('avgDepth').value = log.avgDepth;
+                document.getElementById('waterTemp').value = log.waterTemp;
+                document.getElementById('diveType').value = log.diveType;
+                document.getElementById('equipmentUsed').value = log.equipmentUsed;
+                document.getElementById('airMix').value = log.airMix;
+                document.getElementById('startPressure').value = log.startPressure;
+                document.getElementById('endPressure').value = log.endPressure;
+                document.getElementById('buddy').value = log.buddy;
+                document.getElementById('certificationLevel').value = log.certificationLevel;
+                document.getElementById('safetyStop').value = log.safetyStop;
+                document.getElementById('visibility').value = log.visibility;
+                document.getElementById('current').value = log.current;
+                document.getElementById('weatherConditions').value = log.weatherConditions;
+                document.getElementById('marineLife').value = log.marineLife;
+                document.getElementById('bottomType').value = log.bottomType;
+                document.getElementById('notes').value = log.notes;
+                document.getElementById('diveRating').value = log.diveRating;
+            } else {
+                document.getElementById('modalTitle').textContent = 'New Dive Log';
+                document.getElementById('logForm').reset();
+                document.getElementById('logId').value = '';
+            }
+        }
+
+        function closeLogModal() {
+            document.getElementById('logModal').classList.add('hidden');
+        }
+
+        document.getElementById('logForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const logId = document.getElementById('logId').value;
+            const newLog = {
+                diveNumber: document.getElementById('diveNumber').value,
+                location: document.getElementById('diveLocation').value,
+                date: document.getElementById('diveDate').value,
+                time: document.getElementById('diveTime').value,
+                duration: document.getElementById('duration').value,
+                maxDepth: document.getElementById('maxDepth').value,
+                avgDepth: document.getElementById('avgDepth').value,
+                waterTemp: document.getElementById('waterTemp').value,
+                diveType: document.getElementById('diveType').value,
+                equipmentUsed: document.getElementById('equipmentUsed').value,
+                airMix: document.getElementById('airMix').value,
+                startPressure: document.getElementById('startPressure').value,
+                endPressure: document.getElementById('endPressure').value,
+                buddy: document.getElementById('buddy').value,
+                certificationLevel: document.getElementById('certificationLevel').value,
+                safetyStop: document.getElementById('safetyStop').value,
+                visibility: document.getElementById('visibility').value,
+                current: document.getElementById('current').value,
+                weatherConditions: document.getElementById('weatherConditions').value,
+                marineLife: document.getElementById('marineLife').value,
+                bottomType: document.getElementById('bottomType').value,
+                notes: document.getElementById('notes').value,
+                diveRating: document.getElementById('diveRating').value
+            };
+
+            let logs = JSON.parse(localStorage.getItem('divingLogs')) || [];
+
+            if (logId) {
+                logs[logId] = newLog;
+            } else {
+                logs.push(newLog);
+            }
+
+            localStorage.setItem('divingLogs', JSON.stringify(logs));
+            closeLogModal();
+            loadLogs();
+        });
+
+        function editLog(index) {
+            const logs = JSON.parse(localStorage.getItem('divingLogs'));
+            openLogModal(logs[index], index);
+        }
+
+        function deleteLog(index) {
+            let logs = JSON.parse(localStorage.getItem('divingLogs'));
+            logs.splice(index, 1);
+            localStorage.setItem('divingLogs', JSON.stringify(logs));
+            loadLogs();
+        }
+    </script>
+</body>
+</html>
+
